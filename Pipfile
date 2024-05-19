@@ -1,0 +1,21 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = "*"
+chromadb = "*"
+sentence-transformers = "*"
+chroma = "*"
+langchain-chroma = "*"
+pypdf = "*"
+langchain-text-splitters = "*"
+langchain-openai = "*"
+python-dotenv = "*"
+langchain-community = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.10"
