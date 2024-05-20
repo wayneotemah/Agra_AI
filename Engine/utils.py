@@ -63,10 +63,9 @@ class DocumentSearch:
         """
         perform search on the vector store
         """
-        embedding_vector = self.embedded_model.embed_query(query)
-        docs = self.get_vector_store().similarity_search_by_vector(embedding_vector, k=5)
-        return docs
-
+        results = self.vector_store.similarity_search(query)
+        return results
+        
 # instantiate the document search
 doc_search = DocumentSearch()
 
