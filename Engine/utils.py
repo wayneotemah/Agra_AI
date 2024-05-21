@@ -1,15 +1,22 @@
-from langchain_chroma import Chroma
 from langchain_community.document_loaders import PyPDFLoader, DirectoryLoader
-from langchain_community.vectorstores import chroma
+from langchain_community.vectorstores import Chroma
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_retrievers import ParentDocumentRetriever
-from langchain_community.storage import InMemoryStorage
+from langchain.retrievers import ParentDocumentRetriever
+from langchain.storage import InMemoryStore
 from langchain_openai import OpenAIEmbeddings
+
 from django.conf import settings
+
 from dotenv import load_dotenv
+import logging
 import os
 
 load_dotenv()
+
+logger = logging.getLogger(__name__)
+
+# path to the directory where the vector store will be persisted
+vdb_path = os.path.join(os.getcwd(), "vdb")
 
 class DocumentSearch:
     def __init__(self):
@@ -17,31 +24,37 @@ class DocumentSearch:
         self.file_path = os.path.join(os.getcwd(), 'media',"my_docs")
         logger.info("Initializing database with documents from agra")
 
-        
-        # load documents from specified directory
-        documents = self.load_data(self.file_path)
+        try:        
+            # load documents from specified directory
+            documents = self.load_data(self.file_path)
 
-        # split documents into chunks for vectorization
-        child_splitter = RecursiveCharacterTextSplitter(chunk_size=200)
+            # split documents into chunks for vectorization
+            child_splitter = RecursiveCharacterTextSplitter(chunk_size=1000)
 
-        # initialize chroma vector store with specified collection name and persistent db
-        self.vector_store = Chroma(
-            collection_name="agra_docs",
-            embedding_model = OpenAIEmbeddings(api_key=os.getenv("OPENAI_API_KEY")),
-            persist_directory=vdb_path
-        )
+            # initialize chroma vector store with specified collection name and persistent db
+            self.vectorstore = Chroma(
+                collection_name="agra_docs",
+                embedding_function = OpenAIEmbeddings(api_key=os.getenv("OPENAI_API_KEY")),
+                persist_directory=vdb_path,
+            )
 
-        # storage layer for the parent documents
-        storage = InMemoryStorage()
+            # storage layer for the parent documents
+            store = InMemoryStore()
 
-        retriever = ParentDocumentRetriever(
-            vectore_store=self.vector_store,
-            docstore=store,
-            child_splitter=child_splitter,
-            storage=storage
-        )
+            self.retriever = ParentDocumentRetriever(
+                vectorstore=self.vectorstore,
+                docstore=store,
+                child_splitter=child_splitter,
+                parent_splitter=None,
+            )
 
-        
+            self.retriever.add_documents(documents)
+
+            self.vectorstore.persist()
+
+        except Exception as e:
+            logger.error(f"Error occured when initializing the database: {e}")
+            raise e
 
     def load_data(self, file_path):
         """
@@ -63,9 +76,9 @@ class DocumentSearch:
         """
         perform search on the vector store
         """
-        results = self.vector_store.similarity_search(query)
-        return results
-        
+        result = self.vectorstore.similarity_search(query)
+        return result
+
 # instantiate the document search
 doc_search = DocumentSearch()
 
