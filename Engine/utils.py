@@ -50,7 +50,7 @@ class DocumentSearch:
 
             self.retriever.add_documents(documents)
 
-            self.vectorstore.persist()
+            # self.vectorstore.persist()
 
         except Exception as e:
             logger.error(f"Error occured when initializing the database: {e}")
@@ -76,7 +76,8 @@ class DocumentSearch:
         """
         perform search on the vector store
         """
-        result = self.vectorstore.similarity_search(query)
+        # result = self.vectorstore.similarity_search(query)
+        result = self.retriever.invoke(query)
         return result
 
 # instantiate the document search
