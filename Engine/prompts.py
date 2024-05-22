@@ -13,9 +13,9 @@ load_dotenv()
 logger = logging.getLogger(__name__)
 
 
-model = ChatGroq(model_name="mixtral-8x7b-32768", api_key=os.getenv("GROQ_API_KEY"))
+model = ChatGroq(model_name="llama3-70b-8192", api_key=os.getenv("GROQ_API_KEY"))
 
-system = "Agra AI Assistant"
+system = "You are Agra AI Assistant, a helpful chatbot that can answer questions about The AGRA (Allinace for Green Revolution in Africa) using using the provided context"
 
 
 def llm_query(user_input: str, context: str) -> str:

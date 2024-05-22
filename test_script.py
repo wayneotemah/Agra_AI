@@ -14,7 +14,7 @@ load_dotenv()
 def test_document_search():
     try:
         doc_search = DocumentSearch()
-        query = 'What are the applications of automata theory?'
+        query = 'Who is the president of AGRA?'
         results = doc_search.search(query)
         
         if not results:
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     
     if context:
         print("\nTesting llm_query with document context...")
-        test_llm_query('What are the applications of automata theory?', context)
+        test_llm_query('Who is the president of AGRA?', context)
         
         print("\nTesting llm_answer with document context...")
-        test_llm_answer('What are the applications of automata theory?')
+        test_llm_answer('Who is the president of AGRA?')

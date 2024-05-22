@@ -35,7 +35,7 @@ class DocumentSearch:
             self.vectorstore = Chroma(
                 collection_name="agra_docs",
                 embedding_function = OpenAIEmbeddings(api_key=os.getenv("OPENAI_API_KEY")),
-                persist_directory=vdb_path,
+                # persist_directory=vdb_path,
             )
 
             # storage layer for the parent documents
