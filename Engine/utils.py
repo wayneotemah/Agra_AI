@@ -35,7 +35,6 @@ class DocumentSearch:
             self.vectorstore = Chroma(
                 collection_name="agra_docs",
                 embedding_function = OpenAIEmbeddings(api_key=os.getenv("OPENAI_API_KEY")),
-                # persist_directory=vdb_path,
             )
 
             # storage layer for the parent documents
@@ -49,8 +48,6 @@ class DocumentSearch:
             )
 
             self.retriever.add_documents(documents)
-
-            # self.vectorstore.persist()
 
         except Exception as e:
             logger.error(f"Error occured when initializing the database: {e}")
@@ -76,6 +73,8 @@ class DocumentSearch:
         """
         perform search on the vector store
         """
+        if query is None:
+            raise ValueError("Query cannot be None")
         # result = self.vectorstore.similarity_search(query)
         result = self.retriever.invoke(query)
         return result
