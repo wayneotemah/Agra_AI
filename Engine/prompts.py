@@ -4,6 +4,9 @@ from langchain_groq import ChatGroq
 
 from .utils import doc_search
 
+from transformers import pipeline
+import requests
+
 from django.conf import settings
 import logging
 from dotenv import load_dotenv
@@ -58,4 +61,37 @@ def llm_answer(user_input: str) -> str:
     # get the response from the model using the retrieved documents
     return llm_query(user_input=user_input, context=context)
 
-  
+def tts(text):
+    """
+    Convert text to speech
+    """
+    # try:
+    # load the text-to-speech pipeline
+    tts_pipeline = pipeline("text-to-speech", model="kakao-enterprise/vits-ljs")
+
+    # convert text to speech
+    speech = tts_pipeline(text)
+
+    # define a static path to save the audio file
+    static_audio_dir = os.path.join(settings.BASE_DIR, "static", "audio")
+
+    # create a dir if it does not exist
+    os.makedirs(static_audio_dir, exist_ok=True)
+
+    # set the filename for the audio
+    if not filename:
+        filename = f"{text[:20]}.mp3"
+    filepath = os.path.join(static_audio_dir, filename)
+
+    # save the audio file
+    with open(filepath, "wb") as f:
+        f.write(speech["audio"])
+
+    return filepath
+
+    # except Exception as e:
+    #     logger.error(f"Error in converting text to speech: {e}")
+    #     return None
+
+
+
