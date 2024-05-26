@@ -85,20 +85,20 @@ def tts(text, filename=None):
         with torch.no_grad():
             waveform = model(inputs["input_ids"])
 
-        # define a static path to save the audio file
-        static_audio_dir = os.path.join(settings.BASE_DIR, "static", "audio")
+        # define a media path to save the audio file
+        media_audio_dir = os.path.join(settings.BASE_DIR, "media", "audio")
 
         # create a dir if it does not exist
-        os.makedirs(static_audio_dir, exist_ok=True)
+        os.makedirs(media_audio_dir, exist_ok=True)
 
         # set the filename for the audio
         if not filename:
             filename = f"{uuid.uuid4()}.mp3"
-        filepath = os.path.join(static_audio_dir, filename)
+        filepath = os.path.join(media_audio_dir, filename)
 
         # Save the audio file using torchaudio
         waveform_tensor = torch.from_numpy(waveform[0].squeeze().cpu().numpy().astype("float32")).unsqueeze(0)
-        filepath = os.path.join(static_audio_dir, filename)
+        filepath = os.path.join(media_audio_dir, filename)
         torchaudio.save(filepath, waveform_tensor, sample_rate=22050, format='mp3')
 
         return True
