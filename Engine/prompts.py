@@ -25,8 +25,8 @@ system = "You are Agra AI Assistant, a helpful chatbot that can answer questions
 
 
 
-tts_tokenizer = AutoTokenizer.from_pretrained("./Engine/models/vits-ljs")
-tts_model = AutoModelForTextToWaveform.from_pretrained("./Engine/models/vits-ljs")
+tts_tokenizer = AutoTokenizer.from_pretrained("kakao-enterprise/vits-ljs")
+tts_model = AutoModelForTextToWaveform.from_pretrained("kakao-enterprise/vits-ljs")
 
 
 def llm_query(user_input: str, context: str) -> str:
