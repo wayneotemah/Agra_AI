@@ -43,7 +43,7 @@ class AudioQueryView(APIView):
 
             filename = f"{uuid.uuid4()}.mp3"
             if tts(response,filename):
-                audio_file_url = os.path.join(settings.STATIC_URL, "audio", filename)
+                audio_file_url = os.path.join(settings.MEDIA_URL, "audio", filename)
                 return Response({'query': query, 'audio_file_url': audio_file_url}, status=status.HTTP_200_OK)
             else:
                 return Response({"error": "Error in converting text to speech"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
