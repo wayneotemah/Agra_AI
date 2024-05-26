@@ -1,6 +1,8 @@
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+
+
 load_dotenv()
 
 
@@ -13,7 +15,6 @@ OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
-
 
 # Application definition
 
@@ -66,9 +67,6 @@ WSGI_APPLICATION = 'MainApp.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-__import__('pysqlite3')
-import sys
-sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 DATABASES = {
     'default': {

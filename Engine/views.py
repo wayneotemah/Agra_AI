@@ -1,10 +1,11 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from Engine.prompts import llm_answer, tts
-
 import os
+import uuid
+
 from django.conf import settings
+from Engine.prompts import llm_answer, tts
 
 
 # Create your views here.
@@ -37,13 +38,12 @@ class AudioQueryView(APIView):
             if query is None:
                 return Response({"error": "No query provided"}, status=status.HTTP_400_BAD_REQUEST)
 
+            response = llm_answer(query)
             # convert response to speech
-            audio_file_path = tts(query)
-            print(audio_file_path)
-            if audio_file_path:
-                audio_file_url = os.path.join(settings.STATIC_URL, "audio", os.path.basename(audio_file_path))
-                print(audio_file_url)
-                print(query)
+
+            filename = f"{uuid.uuid4()}.mp3"
+            if tts(response,filename):
+                audio_file_url = os.path.join(settings.STATIC_URL, "audio", filename)
                 return Response({'query': query, 'audio_file_url': audio_file_url}, status=status.HTTP_200_OK)
             else:
                 return Response({"error": "Error in converting text to speech"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

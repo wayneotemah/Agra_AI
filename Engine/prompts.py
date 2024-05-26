@@ -17,10 +17,16 @@ import os
 load_dotenv()
 logger = logging.getLogger(__name__)
 
+torchaudio.set_audio_backend("sox_io")
 
 model = ChatGroq(model_name="llama3-70b-8192", api_key=os.getenv("groq_api_key"))
 
 system = "You are Agra AI Assistant, a helpful chatbot that can answer questions about The AGRA (Allinace for Green Revolution in Africa) using using the provided context"
+
+
+
+tts_tokenizer = AutoTokenizer.from_pretrained("./Engine/models/vits-ljs")
+tts_model = AutoModelForTextToWaveform.from_pretrained("./Engine/models/vits-ljs")
 
 
 def llm_query(user_input: str, context: str) -> str:
@@ -69,8 +75,8 @@ def tts(text, filename=None):
     """
     try:
         # load tokenizer and model
-        tokenizer = AutoTokenizer.from_pretrained("kakao-enterprise/vits-ljs")
-        model = AutoModelForTextToWaveform.from_pretrained("kakao-enterprise/vits-ljs")
+        tokenizer = tts_tokenizer
+        model = tts_model
 
         # tokenize the input text
         inputs = tokenizer(text, return_tensors="pt")
@@ -87,14 +93,15 @@ def tts(text, filename=None):
 
         # set the filename for the audio
         if not filename:
-            filename = f"{uuid.uuid4()}.wav"
+            filename = f"{uuid.uuid4()}.mp3"
         filepath = os.path.join(static_audio_dir, filename)
 
         # Save the audio file using torchaudio
         waveform_tensor = torch.from_numpy(waveform[0].squeeze().cpu().numpy().astype("float32")).unsqueeze(0)
-        torchaudio.save(filepath, waveform_tensor, sample_rate=22050, format='wav')
+        filepath = os.path.join(static_audio_dir, filename)
+        torchaudio.save(filepath, waveform_tensor, sample_rate=22050, format='mp3')
 
-        return filepath
+        return True
 
     except Exception as e:
         logger.error(f"Error in converting text to speech: {e}")

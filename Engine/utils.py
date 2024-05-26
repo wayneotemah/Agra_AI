@@ -4,12 +4,12 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.retrievers import ParentDocumentRetriever
 from langchain.storage import InMemoryStore
 from langchain_openai import OpenAIEmbeddings
-
-from django.conf import settings
-
 from dotenv import load_dotenv
 import logging
 import os
+
+from django.conf import settings
+
 
 load_dotenv()
 
