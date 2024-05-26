@@ -4,6 +4,11 @@ from langchain_groq import ChatGroq
 
 from .utils import doc_search
 
+from transformers import AutoTokenizer, AutoModelForTextToWaveform
+
+import uuid
+import torch
+import torchaudio
 from django.conf import settings
 import logging
 from dotenv import load_dotenv
@@ -13,7 +18,7 @@ load_dotenv()
 logger = logging.getLogger(__name__)
 
 
-model = ChatGroq(model_name="llama3-70b-8192", api_key=os.getenv("GROQ_API_KEY"))
+model = ChatGroq(model_name="llama3-70b-8192", api_key=os.getenv("groq_api_key"))
 
 system = "You are Agra AI Assistant, a helpful chatbot that can answer questions about The AGRA (Allinace for Green Revolution in Africa) using using the provided context"
 
@@ -58,4 +63,42 @@ def llm_answer(user_input: str) -> str:
     # get the response from the model using the retrieved documents
     return llm_query(user_input=user_input, context=context)
 
-  
+def tts(text, filename=None):
+    """
+    Convert text to speech
+    """
+    try:
+        # load tokenizer and model
+        tokenizer = AutoTokenizer.from_pretrained("kakao-enterprise/vits-ljs")
+        model = AutoModelForTextToWaveform.from_pretrained("kakao-enterprise/vits-ljs")
+
+        # tokenize the input text
+        inputs = tokenizer(text, return_tensors="pt")
+
+        # generate speech from the model
+        with torch.no_grad():
+            waveform = model(inputs["input_ids"])
+
+        # define a static path to save the audio file
+        static_audio_dir = os.path.join(settings.BASE_DIR, "static", "audio")
+
+        # create a dir if it does not exist
+        os.makedirs(static_audio_dir, exist_ok=True)
+
+        # set the filename for the audio
+        if not filename:
+            filename = f"{uuid.uuid4()}.wav"
+        filepath = os.path.join(static_audio_dir, filename)
+
+        # Save the audio file using torchaudio
+        waveform_tensor = torch.from_numpy(waveform[0].squeeze().cpu().numpy().astype("float32")).unsqueeze(0)
+        torchaudio.save(filepath, waveform_tensor, sample_rate=22050, format='wav')
+
+        return filepath
+
+    except Exception as e:
+        logger.error(f"Error in converting text to speech: {e}")
+        return None
+
+
+

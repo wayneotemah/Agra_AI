@@ -18,6 +18,11 @@ langchain-groq = "*"
 djangorestframework = "*"
 django-filter = "*"
 django-cors-headers = "*"
+transformers = "*"
+speechrecognition = "*"
+phonemizer = "*"
+py-espeak-ng = "*"
+espeak-phonemizer-windows = "*"
 
 [dev-packages]
 
