@@ -8,9 +8,7 @@ from django.conf import settings
 from Engine.prompts import llm_answer, tts
 
 
-# Create your views here.
-# def index(request):
-#     return HttpResponse('Hello, World!')
+
 
 class TextQueryView(APIView):
     """

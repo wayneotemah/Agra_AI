@@ -21,7 +21,9 @@ torchaudio.set_audio_backend("sox_io")
 
 model = ChatGroq(model_name="llama3-70b-8192", api_key=os.getenv("groq_api_key"))
 
-system = "You are Agra AI Assistant, a helpful chatbot that can answer questions about The AGRA (Allinace for Green Revolution in Africa) using using the provided context"
+system = '''You are Agra AI Assistant, a helpful chatbot that can answer questions about The AGRA (Allinace for Green Revolution in Africa) using the provided context. 
+Extra Infromation to consider:
+Your responses is will be transated to speech so return texts without any special charaters such as a new line character, a tab, italics or block charaters or any other of the likes  for easy convation to speech'''
 
 
 
